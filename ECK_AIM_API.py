@@ -1,3 +1,4 @@
+from gevent import pywsgi
 from flask import Flask, request, render_template, redirect, url_for
 from bs4 import BeautifulSoup
 import ECK_AIM_Requests
@@ -54,4 +55,5 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5566, debug=False)
+    sever = pywsgi.WSGIServer(('0.0.0.0, 80'), app)
+    sever.sever_forever()
