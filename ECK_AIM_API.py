@@ -6,6 +6,9 @@ import ECK_Image_Requests
 app = Flask(__name__)
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    patInfo = None
+    Simple_data_df = None
+    Complete_data_df = None
     if request.method == "POST":
         global ChartNo
         
@@ -23,12 +26,8 @@ def index():
         tr.extract()
         print(table)
         Complete_data_df = table
-
         # print(patInfo)
         # print(Simple_data_df, Complete_data_df)
-
-
-        
     return render_template("AIM_result.html", patInfo = patInfo, Simple_data_df = Simple_data_df, Complete_data_df = Complete_data_df)
     
 
