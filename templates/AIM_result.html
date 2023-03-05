@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>恩主公麻醉偷懶神器</title>
+    <style>
+      /* 將輸入欄固定在頁面上方 */
+      #input-area {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: #f1f1f1;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      
+      /* 輸入框和按鈕的樣式 */
+      #ChartNo {
+        width: 70%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 16px;
+      }
+      
+      #submit-button {
+        width: 20%;
+        background-color: #5F9EA0;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      
+      /* 顯示查詢結果的區域 */
+      #result-area {
+        margin-top: 65px; /* 調整與上方的距離 */
+        padding: 70px;
+        font-size: 15px;
+        clear: both; /* 清除浮動 */
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        overflow-x: auto;
+        gap: 10px; 
+      }
+
+      .table-container {
+        width: auto;
+        margin: 0;
+        box-sizing: border-box;
+        overflow-x: auto;
+        border-collapse: collapse;
+      }  
+      
+      /* 設置表格行的背景色 */
+      #result-area tr:nth-child(even) {
+        background-color: #ddd;
+        border-collapse: collapse;
+      }
+      
+      /* 設置表格頭的背景色和文字顏色 */
+      #result-area th {
+        background-color: #5F9EA0;
+        color: white;
+        border: none;
+        padding: 8px;
+        border-collapse: collapse;
+      }
+      
+      /* 設置表格單元格的邊框和填充 */
+      #result-area td {
+        border: none;
+        border-collapse: collapse;
+        padding: 8px;
+      }
+      
+    </style>
+  </head>
+  
+  <body>
+    <div id="input-area">
+        <form method="POST">
+            <input type="text" id="ChartNo" name="ChartNo" placeholder="請輸入要查詢的病歷號">
+            <button type="submit" id="submit-button">送出</button>
+        </form>
+    </div>
+
+    <div id="result-area">
+      <div class="table-container">
+        {% if patInfo %}
+          {{ patInfo | safe }}    
+        {% endif %}
+      </div>
+      <div class="table-container">
+        {% if Simple_data_df %}
+          {{ Simple_data_df | safe }}    
+        {% endif %}
+      </div>
+      <div class="table-container">
+        {% if Complete_data_df %}
+          {{ Complete_data_df | safe }}    
+        {% endif %}
+      </div>
+    </div>
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <script>
+        // 在這裡添加JavaScript代碼，如有需要
+    </script>
+  </body>
+</html>

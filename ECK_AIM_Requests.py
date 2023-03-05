@@ -3,7 +3,6 @@ import datetime
 import json
 import pandas as pd
 
-
 def cal_age(Birthday):
   now = datetime.datetime.now()
   now.strftime("%Y/%m/%d")
@@ -12,22 +11,21 @@ def cal_age(Birthday):
   # print(age)
   return age
 
-def main(ChartNo):
-  
-  # 取得當下時間 
-  datetime_format = datetime.datetime.today().strftime("%Y/%m/%d %H:%M")
+# 取得當下時間 
+datetime_format = datetime.datetime.today().strftime("%Y/%m/%d %H:%M")
 
+
+def Pat_info(ChartNo):
   header = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
     'Cookie': 'IsLogin=IsLogin',
     'Authorization': 'Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiIwMjAwMyIsIlVzZXJOYW1lIjoi6Zmz54eB5pmoIiwiU3RhZmZLZXkiOiIwMjAwM1x1MDAyNumZs-eHgeaZqCIsIlBlcm1pc3Npb24iOiJSZW9wZW5DYXNlQW55UmVjb3JkLCBWaWV3QW55UmVjb3JkLCBFZGl0QW55UmVjb3JkLCBEZWxldGVBbnlSZWNvcmQifQ.jEXzWvmsbaBmzyZav10kAzkQKSnFaiVBY9NhPQiUvEVRqfjDKna--cIQwrBLYQl0WRvuzlCnQsIyQlKiKT03-g'
   }
-
-
   payload = {
     'ChartNo': ChartNo, # "0009370516" 測試用，之後要改成變數ChartNo
     'QueryDate': datetime_format
   }
+
   # 取得病人基本資料
   pat_info = requests.post('http://172.20.110.161/ECK_AIM_WEB/ShareComponent/GetHISPatientInfo', headers = header, data = payload)
   pat_info = json.loads(pat_info.text)
@@ -41,13 +39,23 @@ def main(ChartNo):
     Hieght = "NaN"
     Weight = "NaN"
 
-
-
   PatientInfo = {"PatientInfo": [PatientName, Sex, Birthday, cal_age(Birthday), Hieght, Weight]}
   PatientInfo = pd.DataFrame(PatientInfo)
   PatientInfo.index = ["PatientName", "Sex", "Birthday", "Age", "Hieght", "Weight"]
-  print(PatientInfo)
+  # print(PatientInfo)
+  return PatientInfo.to_html(index=True)
 
+
+def get_data(ChartNo):
+  header = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+    'Cookie': 'IsLogin=IsLogin',
+    'Authorization': 'Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiIwMjAwMyIsIlVzZXJOYW1lIjoi6Zmz54eB5pmoIiwiU3RhZmZLZXkiOiIwMjAwM1x1MDAyNumZs-eHgeaZqCIsIlBlcm1pc3Npb24iOiJSZW9wZW5DYXNlQW55UmVjb3JkLCBWaWV3QW55UmVjb3JkLCBFZGl0QW55UmVjb3JkLCBEZWxldGVBbnlSZWNvcmQifQ.jEXzWvmsbaBmzyZav10kAzkQKSnFaiVBY9NhPQiUvEVRqfjDKna--cIQwrBLYQl0WRvuzlCnQsIyQlKiKT03-g'
+  }
+  payload = {
+    'ChartNo': ChartNo, # "0009370516" 測試用，之後要改成變數ChartNo
+    'QueryDate': datetime_format
+  }
   blood_check = requests.post('http://172.20.110.161/ECK_AIM_WEB/PinPin/PIN/GetBloodCheckViewModel', headers = header, data = payload)
   blood_check = json.loads(blood_check.text)
   bioChem_check = requests.post('http://172.20.110.161/ECK_AIM_WEB/PinPin/PIN/GetBiochemistryCheckViewModel', headers = header, data = payload)
@@ -65,7 +73,7 @@ def main(ChartNo):
       data = [i['ItemName'],"*"+i['ItemValue'],i['CheckDate']]
       LabData_df.append(data)
   LabData_df = pd.DataFrame(LabData_df)
-  LabData_df.columns = ["ItemName", "ItemValue", "CheckDate"]
+  LabData_df.columns = ["ItemName", "CheckValue", "CheckDate"]
   # LabData_df.set_index("ItemName", inplace=True)
   # LabData_df.columns = ["ItemValue", "CheckDate"]
   # print(LabData_df)
@@ -80,20 +88,25 @@ def main(ChartNo):
   df1.index = ["GPT (ALT)", "Creatinine", "K", "Hb", "Platelet", "PT", "APTT"]
 
   DF = pd.concat([df1, df_c], axis=1)
-  DF = DF.drop(["column"], axis = 1)
-  print(DF)
+  Simple_data_df = DF.drop(["column"], axis = 1)
+  # print(Simple_data_df)
 
-  LabData_df.set_index("ItemName", inplace=True)
-  # print(LabData_df)
+  Complete_data_df = LabData_df
+  Complete_data_df.set_index("ItemName", inplace=True)
+
+  # print(Complete_data_df)
+  
+
+  return Simple_data_df.to_html(index=True), Complete_data_df.to_html(index=True)
 
 # 9370516
 
-while True:
-  # 病例號放這邊，補0到十個數字
-  ChartNo = input("請輸入病例號: ")
-  ChartNo = ChartNo.zfill(10)
+# while True:
+#   # 病例號放這邊，補0到十個數字
+#   ChartNo = input("請輸入病例號: ")
+#   ChartNo = ChartNo.zfill(10)
 
-  main(ChartNo) 
+#   main(ChartNo) 
 
 
 
