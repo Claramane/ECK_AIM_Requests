@@ -24,7 +24,7 @@ def index():
         table = soup.find('table')
         tr = soup.select('tr:nth-of-type(2)')[0]
         tr.extract()
-        print(table)
+        # print(table)
         Complete_data_df = table
         # print(patInfo)
         # print(Simple_data_df, Complete_data_df)
@@ -54,4 +54,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=5566, debug=True)

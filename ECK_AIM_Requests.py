@@ -32,14 +32,16 @@ def Pat_info(ChartNo):
   PatientName = pat_info["PatientName"]
   Sex = pat_info["Sex"]
   Birthday = pat_info["Birthday"]
-  try:
-    Hieght = pat_info["Height"]
-    Weight = pat_info["Weight"]
-  except:
-    Hieght = "NaN"
-    Weight = "NaN"
+  
+  if pat_info["Height"] == None:
+    Hieght = "--"
+    Weight = "--"
+  else:
+    Hieght = f'{pat_info["Height"]} cm'
+    Weight = f'{pat_info["Weight"]} kg'
 
-  PatientInfo = {"PatientInfo": [PatientName, Sex, Birthday, cal_age(Birthday), Hieght, Weight]}
+
+  PatientInfo = {"PatientInfo": [PatientName, Sex, Birthday, f'{cal_age(Birthday)}歲', Hieght, Weight]}
   PatientInfo = pd.DataFrame(PatientInfo)
   PatientInfo.index = ["PatientName", "Sex", "Birthday", "Age", "Hieght", "Weight"]
   # print(PatientInfo)
